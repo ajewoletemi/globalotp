@@ -1,15 +1,21 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// 1. Create a Firebase project at https://console.firebase.google.com/
-// 2. Register a Web App and copy its Firebase config below.
-// 3. Enable Authentication > Sign-in method > Phone.
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAUy_-qiYzRBG8Swnfg0zpZcemH2ms2SVk",
+  authDomain: "global-otp-c538a.firebaseapp.com",
+  projectId: "global-otp-c538a",
+  storageBucket: "global-otp-c538a.firebasestorage.app",
+  messagingSenderId: "56557169051",
+  appId: "1:56557169051:web:7c6f330808bdee849f193e",
+  measurementId: "G-27BKNPNLRH"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const analytics = getAnalytics(app);
