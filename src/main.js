@@ -33,7 +33,7 @@ app.innerHTML = `
       <div id="phone-step">
         <label for="phone">Phone number</label>
         <div class="phone-input"><span class="phone-prefix">＋</span><input id="phone" type="tel" autocomplete="tel" placeholder="2348012345678" /><span class="input-check">●</span></div>
-        <small class="hint">Include your country code, e.g. 234 for Nigeria. Do not add a leading 0 after the country code.</small>
+        <small class="hint">Use international format with + and country code, e.g. +2348012345678 for Nigeria.</small>
         <div id="recaptcha-container"></div>
         <button class="primary" id="send-code">Send verification code <span>→</span></button>
         <p class="notice" id="message" role="status"></p>
@@ -114,7 +114,8 @@ async function sendCode() {
     startCountdown();
   } catch (error) {
     console.error(error);
-    setMessage("message", friendlyError(error));
+    const extra = error?.code === "auth/invalid-api-key" ? " Check the Firebase config in src/firebase.js." : "";
+    setMessage("message", friendlyError(error) + extra, "error");
     if (verifier) { verifier.clear(); verifier = null; }
   } finally {
     $("send-code").disabled = false;
