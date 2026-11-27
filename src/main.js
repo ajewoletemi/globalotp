@@ -33,7 +33,7 @@ app.innerHTML = `
       <div id="phone-step">
         <label for="phone">Phone number</label>
         <div class="phone-input"><span class="phone-prefix">＋</span><input id="phone" type="tel" autocomplete="tel" placeholder="2348012345678" /><span class="input-check">●</span></div>
-        <small class="hint">Use international format with + and country code, e.g. +2348012345678 for Nigeria.</small>
+        <small class="hint">Include your country code, e.g. 234 for Nigeria. Do not add a leading 0 after the country code.</small>
         <div id="recaptcha-container"></div>
         <button class="primary" id="send-code">Send verification code <span>→</span></button>
         <p class="notice" id="message" role="status"></p>
@@ -114,8 +114,7 @@ async function sendCode() {
     startCountdown();
   } catch (error) {
     console.error(error);
-    const extra = error?.code === "auth/invalid-api-key" ? " Check the Firebase config in src/firebase.js." : "";
-    setMessage("message", friendlyError(error) + extra, "error");
+    setMessage("message", friendlyError(error));
     if (verifier) { verifier.clear(); verifier = null; }
   } finally {
     $("send-code").disabled = false;
@@ -123,13 +122,18 @@ async function sendCode() {
 }
 function friendlyError(error) {
   const map = {
-    "auth/invalid-phone-number": "That phone number is not valid. Check the country code and try again.",
-    "auth/too-many-requests": "Too many attempts. Please wait before trying again.",
-    "auth/quota-exceeded": "The SMS quota for this Firebase project has been reached.",
-    "auth/captcha-check-failed": "The security check failed. Refresh the page and try again.",
-    "auth/operation-not-allowed": "Phone sign-in is not enabled in your Firebase project."
+    "auth/invalid-phone-number": "Invalid phone number. Use international format, e.g. +2348012345678.",
+    "auth/too-many-requests": "Firebase temporarily blocked requests after too many attempts. Wait before retrying.",
+    "auth/quota-exceeded": "Firebase SMS quota exceeded. Check project usage, billing and SMS region policy.",
+    "auth/captcha-check-failed": "reCAPTCHA failed. Check authorized domains, API key restrictions and browser settings.",
+    "auth/operation-not-allowed": "Phone sign-in is not enabled in this Firebase project.",
+    "auth/unauthorized-domain": "This Render domain is not authorized in Firebase Authentication settings.",
+    "auth/invalid-api-key": "Firebase API key is invalid. Copy the Web App config from the correct project.",
+    "auth/network-request-failed": "Network request failed. Check your connection and try again.",
+    "auth/app-not-authorized": "This app is not authorized. Check Firebase project configuration and API key restrictions."
   };
-  return map[error?.code] || "We couldn't send the code. Check your Firebase setup and try again.";
+  const explanation = map[error?.code] || error?.message || "Unknown Firebase error.";
+  return `${explanation} [${error?.code || "no-error-code"}]`;
 }
 async function verifyCode() {
   const code = $("code").value.trim();
